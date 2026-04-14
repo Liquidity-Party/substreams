@@ -1,0 +1,90 @@
+specVersion: v0.1.0
+package:
+  name: "liquidity_party"
+  version: v0.1.0
+  url: "https://github.com/liquidity-party/substreams"
+  description: "TVL and APY metrics for Liquidity Party LMSR pools on Ethereum mainnet"
+  doc: README.md
+
+network: mainnet
+
+protobuf:
+  files:
+    - liquidity_party.proto
+  importPaths:
+    - ./proto
+
+binaries:
+  default:
+    type: wasm/rust-v1
+    file: ./target/wasm32-unknown-unknown/release/liquidity_party.wasm
+
+modules:
+  - name: map_pools_created
+    kind: map
+    initialBlock: 24535806
+    inputs:
+      - params: string
+      - source: sf.ethereum.type.v2.Block
+    output:
+      type: proto:liquidity.party.v1.BlockPoolEvents
+
+  - name: store_pools
+    kind: store
+    updatePolicy: set_if_not_exists
+    valueType: proto:liquidity.party.v1.PoolMetadata
+    inputs:
+      - map: map_pools_created
+
+  - name: map_pool_events
+    kind: map
+    inputs:
+      - source: sf.ethereum.type.v2.Block
+      - store: store_pools
+    output:
+      type: proto:liquidity.party.v1.BlockPoolEvents
+
+  - name: store_killed_pools
+    kind: store
+    updatePolicy: set
+    valueType: int64
+    inputs:
+      - map: map_pool_events
+
+  - name: store_balances
+    kind: store
+    updatePolicy: add
+    valueType: bigint
+    inputs:
+      - map: map_pool_events
+
+  - name: store_cumulative_fees
+    kind: store
+    updatePolicy: add
+    valueType: bigint
+    inputs:
+      - map: map_pool_events
+
+  - name: store_fee_snapshots
+    kind: store
+    updatePolicy: set_if_not_exists
+    valueType: bigint
+    inputs:
+      - map: map_pool_events
+      - store: store_cumulative_fees
+        mode: deltas
+
+  - name: map_pool_metrics
+    kind: map
+    inputs:
+      - map: map_pool_events
+      - store: store_pools
+      - store: store_killed_pools
+      - store: store_balances
+      - store: store_cumulative_fees
+      - store: store_fee_snapshots
+    output:
+      type: proto:liquidity.party.v1.BlockMetrics
+
+params:
+  map_pools_created: factory_address=7692e502fb8ce1c13a97dbbe380be05a545ee0a9

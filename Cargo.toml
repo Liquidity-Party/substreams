@@ -1,0 +1,29 @@
+[package]
+name = "liquidity-party-substreams"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "liquidity_party"
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[dependencies]
+substreams = "0.5"
+substreams-ethereum = "0.9"
+prost = "0.11"
+hex = "0.4"
+num-bigint = "0.4"
+num-traits = "0.2"
+ethabi = "17"
+
+[build-dependencies]
+substreams-ethereum = "0.9"
+anyhow = "1"
+
+[target.wasm32-unknown-unknown.dependencies]
+getrandom = { version = "0.2", features = ["custom"] }
+
+[profile.release]
+opt-level = 3
+lto = true

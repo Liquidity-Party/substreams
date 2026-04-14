@@ -1,0 +1,68 @@
+syntax = "proto3";
+package liquidity.party.v1;
+
+// Pool metadata captured on creation (PartyStarted event from factory)
+message PoolMetadata {
+  string pool_address = 1;  // lowercase hex, no 0x
+  string name = 2;
+  string symbol = 3;
+  repeated string tokens = 4;  // token addresses, lowercase hex, no 0x
+  uint64 created_at_block = 5;
+  uint64 created_at_timestamp = 6;
+}
+
+// Signed balance change for a single (pool, token) pair.
+// delta is a signed decimal string; positive = tokens flowed into pool.
+message BalanceDelta {
+  string pool_address = 1;
+  string token = 2;
+  string delta = 3;
+}
+
+// LP fee earned from a single event.
+// Indexed by hour_bucket (unix_timestamp / 3600) for snapshot store.
+message FeeAccrual {
+  string pool_address = 1;
+  string token = 2;
+  string lp_fee = 3;    // decimal string, raw token units
+  uint64 hour_bucket = 4;
+}
+
+// Intermediate output shared by map_pools_created and map_pool_events.
+message BlockPoolEvents {
+  uint64 block_number = 1;
+  uint64 timestamp = 2;
+  uint64 hour_bucket = 3;  // timestamp / 3600
+  repeated PoolMetadata new_pools = 4;
+  repeated BalanceDelta balance_deltas = 5;
+  repeated FeeAccrual fee_accruals = 6;
+  // Pool addresses (hex, no 0x) that emitted Killed() this block.
+  repeated string killed_pools = 7;
+}
+
+// Per-pool output from map_pool_metrics.
+message PoolMetrics {
+  string pool_address = 1;
+  string name = 2;
+  string symbol = 3;
+  repeated string tokens = 4;
+
+  // Raw per-token values (one entry per token, same order as tokens[])
+  repeated string balances = 5;   // current pool balance in raw token units
+  repeated string fees_24h = 6;   // LP fees earned in last ~24h, raw token units
+  repeated string apy_bps = 7;    // per-token APY in bps = fees_24h/balance * 365.24 * 10000
+
+  // Quote-adjusted values denominated in tokens[0] (the pool's stablecoin).
+  // Internal price used: 1 token[n] = balance[0] / balance[n] units of token[0].
+  string quote_tvl = 8;           // balance[0] * num_tokens
+  string quote_fees_24h = 9;      // sum_n( fees_24h[n] * balance[0] / balance[n] )
+  string quote_apr_bps = 10;      // (quote_fees_24h / quote_tvl) * 365.24 * 10000   (simple)
+  string quote_apy_bps = 11;      // ((1 + daily_rate)^365.24 - 1) * 10000            (compound)
+}
+
+// Final output for each block.
+message BlockMetrics {
+  uint64 block_number = 1;
+  uint64 timestamp = 2;
+  repeated PoolMetrics pools = 3;
+}

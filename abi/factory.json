@@ -1,0 +1,13 @@
+[
+  {
+    "type": "event",
+    "name": "PartyStarted",
+    "anonymous": false,
+    "inputs": [
+      {"name": "pool",   "type": "address",   "indexed": true},
+      {"name": "name",   "type": "string",    "indexed": false},
+      {"name": "symbol", "type": "string",    "indexed": false},
+      {"name": "tokens", "type": "address[]", "indexed": false}
+    ]
+  }
+]

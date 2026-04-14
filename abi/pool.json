@@ -1,0 +1,64 @@
+[
+  {
+    "type": "event",
+    "name": "Swap",
+    "anonymous": false,
+    "inputs": [
+      {"name": "payer",       "type": "address", "indexed": false},
+      {"name": "receiver",    "type": "address", "indexed": true},
+      {"name": "tokenIn",     "type": "address", "indexed": true},
+      {"name": "tokenOut",    "type": "address", "indexed": true},
+      {"name": "amountIn",    "type": "uint256", "indexed": false},
+      {"name": "amountOut",   "type": "uint256", "indexed": false},
+      {"name": "lpFee",       "type": "uint256", "indexed": false},
+      {"name": "protocolFee", "type": "uint256", "indexed": false}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "SwapMint",
+    "anonymous": false,
+    "inputs": [
+      {"name": "payer",       "type": "address", "indexed": true},
+      {"name": "receiver",    "type": "address", "indexed": true},
+      {"name": "tokenIn",     "type": "address", "indexed": true},
+      {"name": "amountIn",    "type": "uint256", "indexed": false},
+      {"name": "amountOut",   "type": "uint256", "indexed": false},
+      {"name": "lpFee",       "type": "uint256", "indexed": false},
+      {"name": "protocolFee", "type": "uint256", "indexed": false}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "BurnSwap",
+    "anonymous": false,
+    "inputs": [
+      {"name": "payer",       "type": "address", "indexed": true},
+      {"name": "receiver",    "type": "address", "indexed": true},
+      {"name": "tokenOut",    "type": "address", "indexed": true},
+      {"name": "amountIn",    "type": "uint256", "indexed": false},
+      {"name": "amountOut",   "type": "uint256", "indexed": false},
+      {"name": "lpFee",       "type": "uint256", "indexed": false},
+      {"name": "protocolFee", "type": "uint256", "indexed": false}
+    ]
+  },
+  {
+    "type": "event",
+    "name": "Killed",
+    "anonymous": false,
+    "inputs": []
+  },
+  {
+    "type": "event",
+    "name": "Flash",
+    "anonymous": false,
+    "inputs": [
+      {"name": "initiator",   "type": "address", "indexed": true},
+      {"name": "receiver",    "type": "address", "indexed": true},
+      {"name": "token",       "type": "address", "indexed": true},
+      {"name": "amount",      "type": "uint256", "indexed": false},
+      {"name": "lpFee",       "type": "uint256", "indexed": false},
+      {"name": "protocolFee", "type": "uint256", "indexed": false}
+    ]
+  }
+]
