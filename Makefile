@@ -20,7 +20,7 @@ pack: build
 ## Publish the .spkg to the Substreams.dev registry
 ## Requires SUBSTREAMS_API_TOKEN to be set in your environment
 publish: pack
-	substreams publish $(SPKG)
+	substreams registry publish $(SPKG)
 
 ## Stream map_pool_metrics against mainnet and print JSON output
 ## Usage: make run  or  make run START_BLOCK=24535806 STOP_BLOCK=+50
